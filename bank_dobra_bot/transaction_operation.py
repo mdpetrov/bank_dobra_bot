@@ -26,7 +26,8 @@ class TransactionOperations(object):
         if os.path.isfile(file_path):
             with open(file_path, mode='rt', encoding='utf-8') as con:
                 transaction_list = json.load(con)
-            id = transaction_list[-1]['id'] + 1
+            if len(transaction_list) > 0:
+                id = transaction_list[-1]['id'] + 1
             transaction_list.append(transaction_to_add)
             LO.write_log(chat, 'Transaction added')
         else:
