@@ -36,7 +36,10 @@ class TransactionOperations(object):
         with open(file_path, mode='wt', encoding='utf-8') as con:
             json.dump(transaction_list, con)
         LO.write_log(chat, 'Transaction list is saved')
-        return "Транзакция успешно добавлена"
+        
+        total_sum = self.transaction_sum(transaction_list)
+        
+        return f"Транзакция успешно добавлена. Общая сумма {total_sum} рублей"
         
         
     def remove_last_transaction(self, chat):
@@ -62,5 +65,9 @@ class TransactionOperations(object):
                 return "Нечего удалять"
         else:
             return "Нечего удалять"
-        
-                
+            
+    def transaction_sum(self, transaction_list):
+        total_sum = 0
+        for transaction in transaction_list:
+            total_sum += transaction['sum']
+        return total_sum
