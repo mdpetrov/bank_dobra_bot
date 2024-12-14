@@ -55,7 +55,7 @@ def get_message_add_transaction(message):
     fund_list = config.fund_list
     
     markup = MO.gen_markup_from_list(fund_list, columns=1)
-    message = BO.send_message(text=message_text, chat_id=message.chat.id, reply_markup=markup)
+    message = BO.send_message(text=message_text, chat_id=message.chat.id, reply_markup=markup, params=local_params)
     
     PO.save_params(message.chat.id, local_params)
 
