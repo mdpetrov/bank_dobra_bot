@@ -1,7 +1,7 @@
 import pandas as pd
 import json
 import datetime
-from pmd_daubi_bot.log_operation import LogOperations
+from bank_dobra_bot.log_operation import LogOperations
 
 
 class TransactionOperations(object):
