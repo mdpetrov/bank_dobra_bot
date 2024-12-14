@@ -56,7 +56,7 @@ class TransactionOperations(object):
                 with open(file_path, mode='wt', encoding='utf-8') as con:
                     json.dump(transaction_list, con)
                 LO.write_log(chat, 'Transaction list is saved')
-                return f"Последняя транзакция на сумму {last_transaction.sum} удалена"
+                return f"Последняя транзакция на сумму {last_transaction['sum']} удалена"
             else:
                 return "Нечего удалять"
         else:
