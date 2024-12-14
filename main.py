@@ -48,6 +48,17 @@ def get_message_start(message):
     BO.send_message(message.chat.id, text=start_text, params=local_params,reply_markup=markup)
     PO.save_params(message.chat.id, local_params)
 
+@bot.message_handler(commands=['add_transaction'], chat_types=['private'], func=lambda m: (time.time() - m.date <= 10))
+def get_message_add_transaction(message):
+    local_params = PO.load_params(message.chat.id)
+    message_text = 'Выберите фонд'
+    fund_list = config.fund_list
+    
+    markup = MO.gen_markup_from_list(fund_list, columns=1)
+    message = BO.edit_message_text(text=message_text, chat_id=message.chat.id, message_id=message.message_id, reply_markup=markup)
+    
+    PO.save_params(message.chat.id, local_params)
+
 
 @bot.callback_query_handler(func=lambda call: (call.data == 'add_transaction') and (time.time() - call.message.date <= 60))
 def add_transaction_choose_fund(call): 
@@ -58,8 +69,7 @@ def add_transaction_choose_fund(call):
     markup = MO.gen_markup_from_list(fund_list, columns=1)
     message = BO.edit_message_text(text=message_text, chat_id=call.message.chat.id, message_id=call.message.message_id, reply_markup=markup)
     
-    bot.answer_callback_query(call.id)
-    PO.save_params(message.chat.id, local_params)
+    PO.save_params(call.message.chat.id, local_params)
 
 @bot.callback_query_handler(func=lambda call: (call.data[:5] == 'fund_') and (time.time() - call.message.date <= 60))
 def add_transaction_enter_amount(call): 
@@ -77,6 +87,7 @@ def add_transaction_save_transaction(message, fund):
     local_params = PO.load_params(message.chat.id)
     TO.add_transaction(chat=message.chat, amount=message.text, fund=fund)
     message_text = f'Успешно добавлено {message.text} рублей в фонд {fund}'
+    BO.send_message(message.chat.id, text=message_text, params=local_params)
     PO.save_params(message.chat.id, local_params)
 
 if __name__ == '__main__':
