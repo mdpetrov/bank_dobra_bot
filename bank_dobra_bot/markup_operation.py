@@ -1,6 +1,4 @@
-import json
-import os
-import time
+from telebot import types 
 
 class MarkupOperations(object):
     def __init__(self):

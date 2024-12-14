@@ -1,4 +1,5 @@
 import time
+from telebot import types 
 
 class BotOperations(object):
     def __init__(self, bot):
