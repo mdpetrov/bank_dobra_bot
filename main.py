@@ -63,15 +63,19 @@ def get_message_add_transaction(message):
     
     PO.save_params(message.chat.id, local_params)
 
-@bot.callback_query_handler(func=lambda call: (call.data == 'remove_last_transaction') and (time.time() - call.message.date <= 600))
-def remove_last_transaction(message):
-    local_params = PO.load_params(message.chat.id)
 
-    message_text = TO.remove_last_transaction(message.chat)
-    message = BO.send_message(text=message_text, chat_id=message.chat.id, params=local_params)
+
+
+
+@bot.callback_query_handler(func=lambda call: (call.data == 'remove_last_transaction') and (time.time() - call.message.date <= 600))
+def remove_last_transaction(call):
+    local_params = PO.load_params(call.message.chat.id)
+
+    message_text = TO.remove_last_transaction(call.message.chat)
+    message = BO.send_message(text=message_text, chat_id=call.message.chat.id, params=local_params)
     
     bot.answer_callback_query(call.id)
-    PO.save_params(message.chat.id, local_params)
+    PO.save_params(call.message.chat.id, local_params)
 
 @bot.callback_query_handler(func=lambda call: (call.data == 'add_transaction') and (time.time() - call.message.date <= 600))
 def add_transaction_choose_fund(call): 
