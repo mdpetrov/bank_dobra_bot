@@ -66,6 +66,7 @@ def add_transaction_enter_amount(call):
     local_params = PO.load_params(call.message.chat.id)
     LO.write_log(call.message.chat.id, 'Fund chosen')
     message_text = f'Выбран фонд {call.message.text}. Введите сумму:'
+    BO.send_message(call.message.chat.id, text=message_text, params=local_params)
     bot.register_next_step_handler(call.message, add_transaction_save_transaction, fund=call.message.text)
     bot.answer_callback_query(call.id)
     PO.save_params(call.message.chat.id, local_params)
