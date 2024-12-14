@@ -2,7 +2,7 @@ import pandas as pd
 import json
 import datetime
 from bank_dobra_bot.log_operation import LogOperations
-
+import os
 
 class TransactionOperations(object):
     def __init__(self, config):
