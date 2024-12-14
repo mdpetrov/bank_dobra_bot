@@ -13,7 +13,7 @@ class TransactionOperations(object):
     def add_transaction(self, chat, amount, fund):
         path = self.config.path
         LO = self.LO
-        LO.write_log(chat.id, 'Trying to add a new transaction')
+        LO.write_log(chat, 'Trying to add a new transaction')
         file_dir = path['transaction_dir']
         file_name = f"{chat.username}.json"
         file_path = os.path.join(file_dir, file_name)
@@ -28,11 +28,11 @@ class TransactionOperations(object):
                 transaction_list = json.load(con)
             id = transaction_list[-1]['id'] + 1
             transaction_list.append(transaction_to_add)
-            LO.write_log(chat.id, 'Transaction added')
+            LO.write_log(chat, 'Transaction added')
         else:
             transaction_list = [transaction_to_add]
-            LO.write_log(chat.id, 'Created new transaction list')
+            LO.write_log(chat, 'Created new transaction list')
         with open(file_path, mode='wt', encoding='utf-8') as con:
             json.dump(transaction_list, con)
-        LO.write_log(chat.id, 'Transaction list is saved')
+        LO.write_log(chat, 'Transaction list is saved')
                 

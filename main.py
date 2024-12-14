@@ -11,6 +11,8 @@ import pandas as pd
 import re
 import logging
 
+logging.basicConfig(filename='log.log', level=logging.INFO)
+
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 # Custom packages
@@ -74,7 +76,7 @@ def add_transaction_choose_fund(call):
 @bot.callback_query_handler(func=lambda call: (call.data[:5] == 'fund_') and (time.time() - call.message.date <= 60))
 def add_transaction_enter_amount(call): 
     local_params = PO.load_params(call.message.chat.id)
-    LO.write_log(call.message.chat.id, 'Fund chosen')
+    LO.write_log(call.message.chat, 'Fund chosen')
     fund_id = int(call.data[5:])
     fund_name = config.fund_list[fund_id]
     message_text = f'Выбран фонд {fund_name}. Введите сумму:'
@@ -95,12 +97,11 @@ def add_transaction_save_transaction(message, fund):
 if __name__ == '__main__':
     while True:
         try:
-            LO.write_log(0, 'Restart the bot')
+            logger.info('Restart the bot')
             bot.polling(none_stop=True, interval=1) #обязательная для работы бота часть
         except Exception as e:
-            LO.write_log(0, 'Error in execution')
+            logger.error('Error in execution')
             # LO.write_log(0, e)
-            logging.basicConfig(level=logging.DEBUG)
+            
             logging.error(e, exc_info=True)
             time.sleep(1*60) # 1 minute
-            logging.basicConfig(level=logging.INFO)
