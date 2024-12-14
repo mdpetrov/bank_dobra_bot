@@ -15,7 +15,7 @@ class TransactionOperations(object):
         LO = self.LO
         LO.write_log(chat.id, 'Trying to add a new transaction')
         file_dir = path['transaction_dir']
-        file_name = f"{chat_id.username}.json"
+        file_name = f"{chat.id.username}.json"
         file_path = os.path.join(file_dir, file_name)
         
         id = transaction_list[-1]['id'] + 1
