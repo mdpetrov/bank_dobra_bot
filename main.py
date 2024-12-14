@@ -1,6 +1,9 @@
 import telebot
 from telebot import types 
 from telebot.util import quick_markup
+import os
+import pandas as pd
+import numpy as np
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
