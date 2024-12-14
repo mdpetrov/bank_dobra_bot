@@ -47,6 +47,7 @@ def get_message_start(message):
 Выберите команду'''
     markup = quick_markup({
         'Добавить транзакцию': {'callback_data': 'add_transaction'},
+        'Удалить последнюю транзакцию': {'callback_data': 'remove_last_transaction'}
     })
     BO.send_message(message.chat.id, text=start_text, params=local_params,reply_markup=markup)
     PO.save_params(message.chat.id, local_params)
@@ -62,6 +63,14 @@ def get_message_add_transaction(message):
     
     PO.save_params(message.chat.id, local_params)
 
+@bot.message_handler(commands=['remove_last_transaction'], chat_types=['private'], func=lambda m: (time.time() - m.date <= 10))
+def get_message_remove_transaction(message):
+    local_params = PO.load_params(message.chat.id)
+
+    message_text = TO.remove_last_transaction(message.chat)
+    message = BO.send_message(text=message_text, chat_id=message.chat.id, params=local_params)
+    
+    PO.save_params(message.chat.id, local_params)
 
 @bot.callback_query_handler(func=lambda call: (call.data == 'add_transaction') and (time.time() - call.message.date <= 60))
 def add_transaction_choose_fund(call): 

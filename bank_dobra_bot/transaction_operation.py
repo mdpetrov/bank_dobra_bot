@@ -35,4 +35,31 @@ class TransactionOperations(object):
         with open(file_path, mode='wt', encoding='utf-8') as con:
             json.dump(transaction_list, con)
         LO.write_log(chat, 'Transaction list is saved')
+        return "Транзакция успешно добавлена"
+        
+        
+    def remove_last_transaction(self, chat):
+        path = self.config.path
+        LO = self.LO
+        LO.write_log(chat, 'Trying to remove the last transaction')
+        file_dir = path['transaction_dir']
+        file_name = f"{chat.username}.json"
+        file_path = os.path.join(file_dir, file_name)
+        
+        if os.path.isfile(file_path):
+            with open(file_path, mode='rt', encoding='utf-8') as con:
+                transaction_list = json.load(con)
+            if len(transaction_list) > 0:
+                last_transaction = transaction_list.pop()
+                LO.write_log(chat, 'Transaction removed')
+
+                with open(file_path, mode='wt', encoding='utf-8') as con:
+                    json.dump(transaction_list, con)
+                LO.write_log(chat, 'Transaction list is saved')
+                return f"Последняя транзакция на сумму {last_transaction.sum} удалена"
+            else:
+                return "Нечего удалять"
+        else:
+            return "Нечего удалять"
+        
                 
