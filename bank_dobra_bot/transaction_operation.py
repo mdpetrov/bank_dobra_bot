@@ -22,7 +22,7 @@ class TransactionOperations(object):
         transaction_to_add = {'timestamp':datetime.datetime.now().strftime('%Y-%h-%d %H-%M-%S'),
                                      'id':id,
                                      'fund':fund,
-                                     'sum':'amount}
+                                     'sum':amount}
         if os.path.isfile(file_path):
             with open(file_path, mode='rt', encoding='utf-8') as con:
                 transaction_list = json.load(con)
