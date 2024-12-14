@@ -49,3 +49,17 @@ def add_transaction(call):
     message = BO.edit_message_text(text=message_text, chat_id=call.message.chat.id, message_id=call.message.message_id, reply_markup=markup)
     
     PO.save_params(message.chat.id, local_params)
+    
+    
+if __name__ == '__main__':
+    while True:
+        try:
+            LO.write_log(0, 'Restart the bot')
+            bot.polling(none_stop=True, interval=1) #обязательная для работы бота часть
+        except Exception as e:
+            LO.write_log(0, 'Error in execution')
+            # LO.write_log(0, e)
+            logging.basicConfig(level=logging.DEBUG)
+            logging.error(e, exc_info=True)
+            time.sleep(1*60) # 1 minute
+            logging.basicConfig(level=logging.INFO)
