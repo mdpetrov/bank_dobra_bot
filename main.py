@@ -55,7 +55,7 @@ def get_message_add_transaction(message):
     fund_list = config.fund_list
     
     markup = MO.gen_markup_from_list(fund_list, columns=1)
-    message = BO.edit_message_text(text=message_text, chat_id=message.chat.id, message_id=message.message_id, reply_markup=markup)
+    message = BO.send_message(text=message_text, chat_id=message.chat.id, reply_markup=markup)
     
     PO.save_params(message.chat.id, local_params)
 
@@ -77,7 +77,8 @@ def add_transaction_enter_amount(call):
     LO.write_log(call.message.chat.id, 'Fund chosen')
     fund_id = int(call.data[5:])
     message_text = f'Выбран фонд {config.fund_list[fund_id]}. Введите сумму:'
-    BO.send_message(call.message.chat.id, text=message_text, params=local_params)
+    
+    message = BO.send_message(text=message_text, chat_id=message.chat.id)
     bot.register_next_step_handler(call.message, add_transaction_save_transaction, fund=call.message.text)
     bot.answer_callback_query(call.id)
     PO.save_params(call.message.chat.id, local_params)
