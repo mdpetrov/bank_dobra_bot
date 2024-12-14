@@ -16,7 +16,7 @@ class MarkupOperations(object):
             if (len(row_arr) >= columns) or (i == l - 1):
                 markup_arr.append(row_arr)
                 row_arr = []
-        markup_arr.append([types.InlineKeyboardButton('Главное меню', callback_data='main')])
+        # markup_arr.append([types.InlineKeyboardButton('Главное меню', callback_data='main')])
         # print(markup_arr)
         markup_arr = types.InlineKeyboardMarkup(markup_arr)
         return markup_arr

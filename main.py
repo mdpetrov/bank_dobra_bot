@@ -20,6 +20,7 @@ from bank_dobra_bot.params_operation import ParamsOperations
 from bank_dobra_bot.log_operation import LogOperations
 from bank_dobra_bot.bot_operation import BotOperations
 from bank_dobra_bot.markup_operation import MarkupOperations
+from bank_dobra_bot.transaction_operation import TransactionOperations
 
 path = config.path
 
@@ -33,6 +34,7 @@ PO = ParamsOperations(config=config)
 LO = LogOperations(config=config)
 BO = BotOperations(bot=bot)
 MO = MarkupOperations()
+TO = TransactionOperations(config)
 
 @bot.message_handler(commands=['start'], chat_types=['private'], func=lambda m: (time.time() - m.date <= 10))
 def get_message_start(message):
@@ -50,7 +52,7 @@ def get_message_start(message):
 
 
 @bot.callback_query_handler(func=lambda call: (call.data == 'add_transaction') and (time.time() - call.message.date <= 60))
-def add_transaction(call): 
+def add_transaction_choose_fund(call): 
     local_params = PO.load_params(call.message.chat.id)
     message_text = 'Выберите фонд'
     fund_list = config.fund_list
@@ -60,8 +62,21 @@ def add_transaction(call):
     
     bot.answer_callback_query(call.id)
     PO.save_params(message.chat.id, local_params)
-    
-    
+
+@bot.callback_query_handler(func=lambda call: (call.data[:5] == 'fund_') and (time.time() - call.message.date <= 60))
+def add_transaction_enter_amount(call): 
+    local_params = PO.load_params(call.message.chat.id)
+    message_text = f'Выбран фонд {call.message.text}. Введите сумму:'
+    bot.register_next_step_handler(call.message, add_transaction_save_transaction, fund=call.message.text)
+    PO.save_params(message.chat.id, local_params)
+
+
+def add_transaction_save_transaction(message, fund): 
+    local_params = PO.load_params(call.message.chat.id)
+    TO.add_transaction(chat=call.message.chat, amount=message.text, fund=fund)
+    message_text = f'Успешно добавлено {message.text} рублей в фонд {fund}'
+    PO.save_params(message.chat.id, local_params)
+
 if __name__ == '__main__':
     while True:
         try:
