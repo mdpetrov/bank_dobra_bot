@@ -18,7 +18,7 @@ class TransactionOperations(object):
         file_name = f"{chat.username}.json"
         file_path = os.path.join(file_dir, file_name)
         
-        id = transaction_list[-1]['id'] + 1
+        id = 0 
         transaction_to_add = {'timestamp':datetime.datetime.now().strftime('%Y-%h-%d %H-%M-%S'),
                                      'id':id,
                                      'fund':fund,
@@ -26,7 +26,8 @@ class TransactionOperations(object):
         if os.path.isfile(file_path):
             with open(file_path, mode='rt', encoding='utf-8') as con:
                 transaction_list = json.load(con)
-            transaction_list.append()
+            id = transaction_list[-1]['id'] + 1
+            transaction_list.append(transaction_to_add)
             LO.write_log(chat.id, 'Transaction added')
         else:
             transaction_list = [transaction_to_add]
