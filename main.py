@@ -51,13 +51,14 @@ def get_message_start(message):
 
 @bot.callback_query_handler(func=lambda call: (call.data == 'add_transaction') and (time.time() - call.message.date <= 60))
 def add_transaction(call): 
-    local_params = PO.load_params(message.chat.id)
+    local_params = PO.load_params(call.message.chat.id)
     message_text = 'Выберите фонд'
     fund_list = config.fund_list
     
     markup = MO.gen_markup_from_list(fund_list, columns=1)
     message = BO.edit_message_text(text=message_text, chat_id=call.message.chat.id, message_id=call.message.message_id, reply_markup=markup)
     
+    bot.answer_callback_query(call.id)
     PO.save_params(message.chat.id, local_params)
     
     
