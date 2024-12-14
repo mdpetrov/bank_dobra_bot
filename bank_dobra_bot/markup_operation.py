@@ -5,7 +5,7 @@ class MarkupOperations(object):
         pass
 
     def gen_markup_from_list(self, markup_name_list, columns=2):
-        callback_data = [f'fund_{x}' for i,x in enumerate(markup_name_list)]
+        callback_data = [f'fund_{i}' for i,x in enumerate(markup_name_list)]
 
         l = len(callback_data)
         markup_arr = []

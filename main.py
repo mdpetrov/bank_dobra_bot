@@ -44,8 +44,6 @@ def get_message_start(message):
 Выберите команду'''
     markup = quick_markup({
         'Добавить транзакцию': {'callback_data': 'add_transaction'},
-        # 'Сделать рандом': {'callback_data': 'make_random'}
-        # 'Загрузить фильмы': {'callback_data': 'load_movies'}
     })
     BO.send_message(message.chat.id, text=start_text, params=local_params,reply_markup=markup)
     PO.save_params(message.chat.id, local_params)
@@ -66,8 +64,10 @@ def add_transaction_choose_fund(call):
 @bot.callback_query_handler(func=lambda call: (call.data[:5] == 'fund_') and (time.time() - call.message.date <= 60))
 def add_transaction_enter_amount(call): 
     local_params = PO.load_params(call.message.chat.id)
+    LO.write_log(call.message.chat.id, 'Fund chosen')
     message_text = f'Выбран фонд {call.message.text}. Введите сумму:'
     bot.register_next_step_handler(call.message, add_transaction_save_transaction, fund=call.message.text)
+    bot.answer_callback_query(call.id)
     PO.save_params(call.message.chat.id, local_params)
 
 
