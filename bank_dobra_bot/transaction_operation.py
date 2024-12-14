@@ -69,5 +69,8 @@ class TransactionOperations(object):
     def transaction_sum(self, transaction_list):
         total_sum = 0
         for transaction in transaction_list:
-            total_sum += transaction['sum']
+            try:
+                total_sum += int(transaction['sum'])
+            except Exception as e:
+                continue
         return total_sum
