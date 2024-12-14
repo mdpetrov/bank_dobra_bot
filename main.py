@@ -75,7 +75,7 @@ def add_transaction_enter_amount(call):
 
 def add_transaction_save_transaction(message, fund): 
     local_params = PO.load_params(message.chat.id)
-    TO.add_transaction(chat=call.message.chat, amount=message.text, fund=fund)
+    TO.add_transaction(chat=message.chat, amount=message.text, fund=fund)
     message_text = f'Успешно добавлено {message.text} рублей в фонд {fund}'
     PO.save_params(message.chat.id, local_params)
 
