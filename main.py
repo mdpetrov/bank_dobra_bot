@@ -140,7 +140,7 @@ def remove_last_transaction(message):
     if last_transaction == 'Ничего нет':
         message_text = [last_transaction]
     else:
-        message_text = ['Последняя транзакция:\n']
+        message_text = []
         message_text.append(last_transaction)
         message_text.append("\nУдалить последнюю транзакцию? (Да/Нет)")
         bot.register_next_step_handler(message, remove_last_transaction_confirm)
