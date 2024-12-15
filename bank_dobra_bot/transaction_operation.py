@@ -29,7 +29,7 @@ class TransactionOperations(object):
        
     def _update_transaction_list(self, id, fund, amount):
         transaction_to_add = {'id':id,
-                              'timestamp':datetime.datetime.now(ZoneInfo('Europe/Moscow'))).strftime('%Y-%h-%d %H:%M:%S'),
+                              'timestamp':datetime.datetime.now(ZoneInfo('Europe/Moscow')).strftime('%Y-%h-%d %H:%M:%S'),
                               'fund':fund,
                               'sum':amount}
         return transaction_to_add
