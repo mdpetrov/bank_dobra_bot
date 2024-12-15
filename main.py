@@ -114,7 +114,7 @@ def get_message_show_statistics(message):
     # bot.answer_callback_query(call.id)
     # PO.save_params(call.message.chat.id, local_params)
 
-@bot.callback_query_handler(func=lambda call: (call.data[:5] == 'fund_') and (time.time() - call.message.date <= 60))
+@bot.callback_query_handler(func=lambda call: (call.data[:5] == 'fund_') and (time.time() - call.message.date <= 600))
 def add_transaction_enter_amount(call): 
     local_params = PO.load_params(call.message.chat.id)
     LO.write_log(call.message.chat, 'Fund chosen')

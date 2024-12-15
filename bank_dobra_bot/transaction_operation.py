@@ -129,7 +129,7 @@ class TransactionOperations(object):
         if len(transaction_list) == 0:
             return "Ничего нет"
         transaction_df = pd.DataFrame.from_dict(transaction_list)
-        transaction_dg = transaction_df.groupby('fund')['sum'].sum().reset_index(drop=False)
-        stat_print = [f"{r['fund']} - {r['sum']}" for r in transaction_dg.iterrows()]
-        stat_print.insert(0, 'Статистика по фондам:')
+        transaction_dg = transaction_df.groupby('fund')['sum'].sum()
+        stat_print =  [f"{fund} - {sum}" for fund,sum in transaction_dg.to_dict().items()]
+        stat_print.insert(0, 'Статистика по фондам:\n')
         return '\n'.join(stat_print)
