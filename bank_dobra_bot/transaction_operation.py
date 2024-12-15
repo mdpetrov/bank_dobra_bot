@@ -99,8 +99,8 @@ class TransactionOperations(object):
                 ])]
                 transaction_str_return.insert(0, 'id\tВремя\tФонд\tСумма\n')
                 LO.write_log(chat, f'Returning {len(transaction_str_return)} transactions')
-                return f'''Последние {len(transaction_str_return)} транзакций:
-{"\n".join(transaction_str_return)}'''
+                text = [f'Последние {len(transaction_str_return)} транзакций', "\n".join(transaction_str_return)]
+                return '\n'.join(text)
             else:
                 return "Ничего нет"
         else:
