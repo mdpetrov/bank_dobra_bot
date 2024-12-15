@@ -42,14 +42,19 @@ TO = TransactionOperations(config)
 @bot.message_handler(commands=['start'], chat_types=['private'], func=lambda m: (time.time() - m.date <= 10))
 def get_message_start(message):
     local_params = PO.load_params(message.chat.id)
-    # BO.send_message(message.chat.id, text='ДАУБИ БОТ', params=local_params)
     start_text = '''Банк добра 😊
-Выберите команду'''
-    markup = quick_markup({
-        'Добавить транзакцию': {'callback_data': 'add_transaction'},
-        'Удалить последнюю транзакцию': {'callback_data': 'remove_last_transaction'}
-    })
-    BO.send_message(message.chat.id, text=start_text, params=local_params,reply_markup=markup)
+Список команд:'''
+    # markup = quick_markup({
+        # 'Добавить транзакцию': {'callback_data': 'add_transaction'},
+        # 'Удалить последнюю транзакцию': {'callback_data': 'remove_last_transaction'}
+    # })
+    start_text += '''
+\start \t Приветственное сообщение
+\add_transaction \t Добавить транзакцию
+\remove_last_transaction \t Удалить последнюю транзакцию
+\show_transaction_list \t Вывести список последних транзакций
+'''
+    BO.send_message(message.chat.id, text=start_text, params=local_params)
     PO.save_params(message.chat.id, local_params)
 
 @bot.message_handler(commands=['add_transaction'], chat_types=['private'], func=lambda m: (time.time() - m.date <= 600))
@@ -63,31 +68,43 @@ def get_message_add_transaction(message):
     
     PO.save_params(message.chat.id, local_params)
 
+@bot.message_handler(commands=['show_transaction_list'], chat_types=['private'], func=lambda m: (time.time() - m.date <= 600))
+def get_message_show_transaction_list(message):
+    local_params = PO.load_params(message.chat.id)
+    message_text = TO.get_transaction_list(message.chat)
+    BO.send_message(text=message_text, chat_id=message.chat.id, params=local_params)
+    PO.save_params(message.chat.id, local_params)
 
-
-
-
-@bot.callback_query_handler(func=lambda call: (call.data == 'remove_last_transaction') and (time.time() - call.message.date <= 600))
-def remove_last_transaction(call):
-    local_params = PO.load_params(call.message.chat.id)
-
-    message_text = TO.remove_last_transaction(call.message.chat)
-    message = BO.send_message(text=message_text, chat_id=call.message.chat.id, params=local_params)
+@bot.message_handler(commands=['remove_last_transaction'], chat_types=['private'])
+def get_message_remove_last_transaction(message):
+    local_params = PO.load_params(message.chat.id)
+    remove_last_transaction(message)
     
-    bot.answer_callback_query(call.id)
-    PO.save_params(call.message.chat.id, local_params)
+    PO.save_params(message.chat.id, local_params)
 
-@bot.callback_query_handler(func=lambda call: (call.data == 'add_transaction') and (time.time() - call.message.date <= 600))
-def add_transaction_choose_fund(call): 
-    local_params = PO.load_params(call.message.chat.id)
-    message_text = 'Выберите фонд'
-    fund_list = config.fund_list
+show_transaction_list
+
+# @bot.callback_query_handler(func=lambda call: (call.data == 'remove_last_transaction') and (time.time() - call.message.date <= 600))
+# def remove_last_transaction(call):
+    # local_params = PO.load_params(call.message.chat.id)
+
+    # message_text = TO.remove_last_transaction(call.message.chat)
+    # message = BO.send_message(text=message_text, chat_id=call.message.chat.id, params=local_params)
     
-    markup = MO.gen_markup_from_list(fund_list, columns=1)
-    message = BO.edit_message_text(text=message_text, chat_id=call.message.chat.id, message_id=call.message.message_id, reply_markup=markup)
+    # bot.answer_callback_query(call.id)
+    # PO.save_params(call.message.chat.id, local_params)
+
+# @bot.callback_query_handler(func=lambda call: (call.data == 'add_transaction') and (time.time() - call.message.date <= 600))
+# def add_transaction_choose_fund(call): 
+    # local_params = PO.load_params(call.message.chat.id)
+    # message_text = 'Выберите фонд'
+    # fund_list = config.fund_list
     
-    bot.answer_callback_query(call.id)
-    PO.save_params(call.message.chat.id, local_params)
+    # markup = MO.gen_markup_from_list(fund_list, columns=1)
+    # message = BO.edit_message_text(text=message_text, chat_id=call.message.chat.id, message_id=call.message.message_id, reply_markup=markup)
+    
+    # bot.answer_callback_query(call.id)
+    # PO.save_params(call.message.chat.id, local_params)
 
 @bot.callback_query_handler(func=lambda call: (call.data[:5] == 'fund_') and (time.time() - call.message.date <= 60))
 def add_transaction_enter_amount(call): 
@@ -102,12 +119,29 @@ def add_transaction_enter_amount(call):
     bot.answer_callback_query(call.id)
     PO.save_params(call.message.chat.id, local_params)
 
-
 def add_transaction_save_transaction(message, fund): 
     local_params = PO.load_params(message.chat.id)
     message_text = TO.add_transaction(chat=message.chat, amount=message.text, fund=fund)
     # message_text = f'Успешно добавлено {message.text} рублей в фонд {fund}'
     BO.send_message(message.chat.id, text=message_text, params=local_params)
+    PO.save_params(message.chat.id, local_params)
+    
+def remove_last_transaction(message):
+    local_params = PO.load_params(message.chat.id)
+    message_text = "Удалить последнюю транзакцию? (Да/Нет)"
+    message = BO.send_message(text=message_text, chat_id=message.chat.id, params=local_params)
+    
+    bot.register_next_step_handler(message, remove_last_transaction_confirm)
+    PO.save_params(message.chat.id, local_params)
+
+def remove_last_transaction_confirm(message):
+    local_params = PO.load_params(message.chat.id)
+    if message.text.lower() == 'да':
+        message_text = TO.remove_last_transaction(message.chat)
+    else:
+        message_text = 'Ничего не удалено'
+    message = BO.send_message(text=message_text, chat_id=message.chat.id, params=local_params)
+    
     PO.save_params(message.chat.id, local_params)
 
 if __name__ == '__main__':
