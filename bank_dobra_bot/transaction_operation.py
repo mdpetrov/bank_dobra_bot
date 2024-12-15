@@ -55,11 +55,11 @@ class TransactionOperations(object):
             else:
                 id = 1
             LO.write_log(chat, f'Transaction list exists with lenght {len(transaction_list)}')
-            transaction_to_add = _update_transaction_list(id=id, amount=amount, fund=fund)
+            transaction_to_add = self._update_transaction_list(id=id, amount=amount, fund=fund)
             transaction_list.append(transaction_to_add)
         else:
             id = 1
-            transaction_to_add = _update_transaction_list(id=id, amount=amount, fund=fund)
+            transaction_to_add = self._update_transaction_list(id=id, amount=amount, fund=fund)
             transaction_list = [transaction_to_add]
             LO.write_log(chat, 'Created new transaction list')
         with open(file_path, mode='wt', encoding='utf-8') as con:
