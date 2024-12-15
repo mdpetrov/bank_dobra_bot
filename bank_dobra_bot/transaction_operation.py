@@ -5,7 +5,7 @@ from bank_dobra_bot.log_operation import LogOperations
 import os
 
 def get_dit_values(d, keys):
-''' Return several elements from a dict as a list'''
+    '''Return several elements from a dict as a list'''
     res = []
     for k in keys:
         res.append(d[k])
