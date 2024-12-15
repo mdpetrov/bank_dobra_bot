@@ -24,7 +24,7 @@ class TransactionOperations(object):
         if not amount.isdigit():
             LO.write_log(chat, 'Wrong transaction amount')
             return "Неверная сумма транзакции. Попробуйте заново."
-        amount = float(amount)
+        amount = int(amount)
         file_dir = path['transaction_dir']
         file_name = f"{chat.username}.json"
         file_path = os.path.join(file_dir, file_name)
