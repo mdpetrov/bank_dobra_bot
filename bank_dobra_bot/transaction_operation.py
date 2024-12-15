@@ -4,36 +4,48 @@ import datetime
 from bank_dobra_bot.log_operation import LogOperations
 import os
 
-def get_dit_values(d, keys):
-    '''Return several elements from a dict as a list'''
-    res = []
-    for k in keys:
-        res.append(d[k])
-    return res
 
 class TransactionOperations(object):
     def __init__(self, config):
         self.config = config
         self.LO = LogOperations(config)
     
-
-    def add_transaction(self, chat, amount, fund):
+    def _transaction_sum(self, transaction_list):
+        '''Calculate sum of all transactions in the list'''
+        total_sum = 0
+        for transaction in transaction_list:
+            try:
+                total_sum += int(transaction['sum'])
+            except Exception as e:
+                continue
+        return total_sum
+    
+    def _get_transaction_file_path(self, chat):
         path = self.config.path
-        LO = self.LO
-        LO.write_log(chat, 'Trying to add a new transaction')
-        if not amount.isdigit():
-            LO.write_log(chat, 'Wrong transaction amount')
-            return "Неверная сумма транзакции. Попробуйте заново."
-        amount = int(amount)
         file_dir = path['transaction_dir']
         file_name = f"{chat.username}.json"
         file_path = os.path.join(file_dir, file_name)
+        return file_path
+        
+    def add_transaction(self, chat, amount, fund):
+        '''Add transaction to transaction list'''
+        LO = self.LO
+        LO.write_log(chat, 'Trying to add a new transaction')
+        if not amount.isdigit():
+            LO.write_log(chat, 'Wrong transaction amount: not a number')
+            return "Неверная сумма транзакции. Ничего не добавлено."
+        elif amount <= 0:
+            LO.write_log(chat, 'Wrong transaction amount: less or equal zero')
+            return "Неверная сумма транзакции. Ничего не добавлено."
+        amount = int(amount)
+
         
         id = 0 
         transaction_to_add = {'id':id,
                               'timestamp':datetime.datetime.now().strftime('%Y-%h-%d %H-%M-%S'), #change to moscow tz
                               'fund':fund,
                               'sum':amount}
+        file_path = self._get_transaction_file_path(chat=chat)
         if os.path.isfile(file_path):
             with open(file_path, mode='rt', encoding='utf-8') as con:
                 transaction_list = json.load(con)
@@ -48,18 +60,15 @@ class TransactionOperations(object):
             json.dump(transaction_list, con)
         LO.write_log(chat, 'Transaction list is saved')
         
-        total_sum = self.transaction_sum(transaction_list)
+        total_sum = self._transaction_sum(transaction_list)
         
         return f"Успешно добавлено {amount} рублей в фонд {fund}. Общая сумма {total_sum} рублей"
         
         
     def remove_last_transaction(self, chat):
-        path = self.config.path
         LO = self.LO
         LO.write_log(chat, 'Trying to remove the last transaction')
-        file_dir = path['transaction_dir']
-        file_name = f"{chat.username}.json"
-        file_path = os.path.join(file_dir, file_name)
+        file_path = self._get_transaction_file_path(chat=chat)
         
         if os.path.isfile(file_path):
             with open(file_path, mode='rt', encoding='utf-8') as con:
@@ -78,12 +87,9 @@ class TransactionOperations(object):
             return "Нечего удалять"
     
     def get_transaction_list(self, chat, limit=10):
-        path = self.config.path
         LO = self.LO
         LO.write_log(chat, f'Last {limit} transactions have been requested')
-        file_dir = path['transaction_dir']
-        file_name = f"{chat.username}.json"
-        file_path = os.path.join(file_dir, file_name)
+        file_path = self._get_transaction_file_path(chat=chat)
         if os.path.isfile(file_path):
             with open(file_path, mode='rt', encoding='utf-8') as con:
                 transaction_list = json.load(con)
@@ -96,7 +102,7 @@ class TransactionOperations(object):
                     f"{x['id']} - {x['timestamp']} - {x['fund']} - {x['sum']}" 
                         for x in transaction_list_return
                  ]
-                transaction_str_return.insert(0, 'id\tВремя\tФонд\tСумма\n')
+                transaction_str_return.insert(0, '*id - Время - Фонд - Сумма*\n')
                 LO.write_log(chat, f'Returning {len(transaction_str_return)} transactions')
                 text = [f'Последние {len(transaction_str_return)} транзакций', "\n".join(transaction_str_return)]
                 return '\n'.join(text)
@@ -105,11 +111,19 @@ class TransactionOperations(object):
         else:
             return "Ничего нет"
     
-    def transaction_sum(self, transaction_list):
-        total_sum = 0
-        for transaction in transaction_list:
-            try:
-                total_sum += int(transaction['sum'])
-            except Exception as e:
-                continue
-        return total_sum
+    def get_transaction_stat(self, chat):
+        LO = self.LO
+        LO.write_log(chat, 'Transaction statistics has been requested')
+        file_path = self._get_transaction_file_path(chat=chat)
+        if not os.path.isfile(file_path):
+            return "Ничего нет"
+        
+        with open(file_path, mode='rt', encoding='utf-8') as con:
+            transaction_list = json.load(con)
+        if len(transaction_list) == 0:
+            return "Ничего нет"
+        transaction_df = pd.DataFrame.from_dict(transaction_list)
+        transaction_dg = transaction_df.groupby('fund')['sum'].sum().reset_index(drop=False)
+        stat_print = [f"{r['fund']} - {r['sum']}" for r in transaction_dg.iterrows()]
+        stat_print.insert(0, 'Статистика по фондам:')
+        return '\n'.join(stat_print)

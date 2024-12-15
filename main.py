@@ -12,7 +12,7 @@ import re
 import logging
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename='log.log', level=logging.INFO)
+logging.basicConfig(filename='log.log', level=logging.INFO, format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s')
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
@@ -53,6 +53,7 @@ def get_message_start(message):
 /add_transaction - Добавить транзакцию
 /remove_last_transaction - Удалить последнюю транзакцию
 /show_transaction_list - Вывести список последних транзакций
+/show_statistics - Вывести статистику по фондам
 '''
     BO.send_message(message.chat.id, text=start_text, params=local_params)
     PO.save_params(message.chat.id, local_params)
@@ -63,7 +64,7 @@ def get_message_add_transaction(message):
     message_text = 'Выберите фонд'
     fund_list = config.fund_list
     
-    markup = MO.gen_markup_from_list(fund_list, columns=1)
+    markup = MO.gen_markup_from_list(fund_list, callback_data_template='fund', columns=1)
     message = BO.send_message(text=message_text, chat_id=message.chat.id, reply_markup=markup, params=local_params)
     
     PO.save_params(message.chat.id, local_params)
@@ -79,6 +80,14 @@ def get_message_show_transaction_list(message):
 def get_message_remove_last_transaction(message):
     local_params = PO.load_params(message.chat.id)
     remove_last_transaction(message)
+    
+    PO.save_params(message.chat.id, local_params)
+    
+@bot.message_handler(commands=['show_statistics'], chat_types=['private'])
+def get_message_show_statistics(message):
+    local_params = PO.load_params(message.chat.id)
+    message_text = TO.get_transaction_stat(chat)
+    BO.send_message(text=message_text, chat_id=message.chat.id, params=local_params)
     
     PO.save_params(message.chat.id, local_params)
 
