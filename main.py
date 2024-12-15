@@ -82,7 +82,6 @@ def get_message_remove_last_transaction(message):
     
     PO.save_params(message.chat.id, local_params)
 
-show_transaction_list
 
 # @bot.callback_query_handler(func=lambda call: (call.data == 'remove_last_transaction') and (time.time() - call.message.date <= 600))
 # def remove_last_transaction(call):
