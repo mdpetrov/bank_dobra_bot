@@ -93,10 +93,9 @@ class TransactionOperations(object):
                 else:
                     transaction_list_return = transaction_list[:limit]
                 transaction_str_return = [
-                    f"{_id} - {_time} - {_fund} - {_amount}" 
-                        for _id, _time, _fund, _amount in get_dit_values(transaction_list_return, 
-                                                                         keys=['id', 'timestamp', 'fund', 'amount'
-                ])]
+                    f"{x['id']} - {x['time']} - {x['fund']} - {x['amount']}" 
+                        for x in transaction_list_return
+                 ]
                 transaction_str_return.insert(0, 'id\tВремя\tФонд\tСумма\n')
                 LO.write_log(chat, f'Returning {len(transaction_str_return)} transactions')
                 text = [f'Последние {len(transaction_str_return)} транзакций', "\n".join(transaction_str_return)]
