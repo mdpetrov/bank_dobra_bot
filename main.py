@@ -135,7 +135,7 @@ def add_transaction_save_transaction(message, fund):
     PO.save_params(message.chat.id, local_params)
     
 def remove_last_transaction(message):
-    local_params = PO.load_params(message.chat.id
+    local_params = PO.load_params(message.chat.id)
     last_transaction = TO.get_transaction_list(message.chat, limit=1)
     if last_transaction == 'Ничего нет':
         message_text = [last_transaction]
