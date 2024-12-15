@@ -86,7 +86,7 @@ def get_message_remove_last_transaction(message):
 @bot.message_handler(commands=['show_statistics'], chat_types=['private'])
 def get_message_show_statistics(message):
     local_params = PO.load_params(message.chat.id)
-    message_text = TO.get_transaction_stat(chat)
+    message_text = TO.get_transaction_stat(message.chat)
     BO.send_message(text=message_text, chat_id=message.chat.id, params=local_params)
     
     PO.save_params(message.chat.id, local_params)
