@@ -41,12 +41,11 @@ class TransactionOperations(object):
         if not amount.isdigit():
             LO.write_log(chat, 'Wrong transaction amount: not a number')
             return "Неверная сумма транзакции. Ничего не добавлено."
-        elif amount <= 0:
-            LO.write_log(chat, 'Wrong transaction amount: less or equal zero')
-            return "Неверная сумма транзакции. Ничего не добавлено."
-        amount = int(amount)
-
-
+        else:
+            amount = int(amount)
+            if amount <= 0:
+                LO.write_log(chat, 'Wrong transaction amount: less or equal zero')
+                return "Неверная сумма транзакции. Ничего не добавлено."
         file_path = self._get_transaction_file_path(chat=chat)
         if os.path.isfile(file_path):
             with open(file_path, mode='rt', encoding='utf-8') as con:
