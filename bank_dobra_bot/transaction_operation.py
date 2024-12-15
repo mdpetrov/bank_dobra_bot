@@ -3,7 +3,7 @@ import json
 import datetime
 from bank_dobra_bot.log_operation import LogOperations
 import os
-
+from zoneinfo import ZoneInfo
 
 class TransactionOperations(object):
     def __init__(self, config):
@@ -26,6 +26,13 @@ class TransactionOperations(object):
         file_name = f"{chat.username}.json"
         file_path = os.path.join(file_dir, file_name)
         return file_path
+       
+    def _update_transaction_list(self, id, fund, amount):
+        transaction_to_add = {'id':id,
+                              'timestamp':datetime.datetime.now(ZoneInfo('Europe/Moscow'))).strftime('%Y-%h-%d %H:%M:%S'),
+                              'fund':fund,
+                              'sum':amount}
+        return transaction_to_add
         
     def add_transaction(self, chat, amount, fund):
         '''Add transaction to transaction list'''
@@ -39,21 +46,21 @@ class TransactionOperations(object):
             return "Неверная сумма транзакции. Ничего не добавлено."
         amount = int(amount)
 
-        
-        id = 0 
-        transaction_to_add = {'id':id,
-                              'timestamp':datetime.datetime.now().strftime('%Y-%h-%d %H-%M-%S'), #change to moscow tz
-                              'fund':fund,
-                              'sum':amount}
+
         file_path = self._get_transaction_file_path(chat=chat)
         if os.path.isfile(file_path):
             with open(file_path, mode='rt', encoding='utf-8') as con:
                 transaction_list = json.load(con)
             if len(transaction_list) > 0:
                 id = transaction_list[-1]['id'] + 1
+            else:
+                id = 1
+            LO.write_log(chat, f'Transaction list exists with lenght {len(transaction_list)}')
+            transaction_to_add = _update_transaction_list(id=id, amount=amount, fund=fund)
             transaction_list.append(transaction_to_add)
-            LO.write_log(chat, 'Transaction added')
         else:
+            id = 1
+            transaction_to_add = _update_transaction_list(id=id, amount=amount, fund=fund)
             transaction_list = [transaction_to_add]
             LO.write_log(chat, 'Created new transaction list')
         with open(file_path, mode='wt', encoding='utf-8') as con:
@@ -99,7 +106,7 @@ class TransactionOperations(object):
                 else:
                     transaction_list_return = transaction_list[:limit]
                 transaction_str_return = [
-                    f"{x['id']} - {x['timestamp']} - {x['fund']} - {x['sum']}" 
+                    f"{x['id']} -- {x['timestamp']} -- {x['fund']} -- {x['sum']}" 
                         for x in transaction_list_return
                  ]
                 transaction_str_return.insert(0, '*id - Время - Фонд - Сумма*\n')
