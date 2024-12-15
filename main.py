@@ -12,7 +12,7 @@ import re
 import logging
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(filename='log.log', level=logging.INFO, format='%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s')
+logging.basicConfig(filename='log.log', level=logging.INFO, format='%(asctime)s. %(levelname)s %(module)s - %(funcName)s: %(message)s')
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
