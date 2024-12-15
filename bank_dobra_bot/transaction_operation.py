@@ -109,9 +109,9 @@ class TransactionOperations(object):
                     f"{x['id']} -- {x['timestamp']} -- {x['fund']} -- {x['sum']}" 
                         for x in transaction_list_return
                  ]
-                transaction_str_return.insert(0, '*id - Время - Фонд - Сумма*\n')
+                transaction_str_return.insert(0, 'id - Время - Фонд - Сумма')
                 LO.write_log(chat, f'Returning {len(transaction_str_return)} transactions')
-                text = [f'Последние {len(transaction_str_return)} транзакций', "\n".join(transaction_str_return)]
+                text = [f'Последние {len(transaction_str_return)} транзакци(и,й)', "\n", "\n".join(transaction_str_return)]
                 return '\n'.join(text)
             else:
                 return "Ничего нет"

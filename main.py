@@ -135,11 +135,17 @@ def add_transaction_save_transaction(message, fund):
     PO.save_params(message.chat.id, local_params)
     
 def remove_last_transaction(message):
-    local_params = PO.load_params(message.chat.id)
-    message_text = "Удалить последнюю транзакцию? (Да/Нет)"
-    message = BO.send_message(text=message_text, chat_id=message.chat.id, params=local_params)
+    local_params = PO.load_params(message.chat.id
+    last_transaction = TO.get_transaction_list(message.chat, limit=1)
+    if last_transaction == 'Ничего нет':
+        message_text = [last_transaction]
+    else:
+        message_text = ['Последняя транзакция:\n']
+        message_text.append(last_transaction)
+        message_text.append("\nУдалить последнюю транзакцию? (Да/Нет)")
+        bot.register_next_step_handler(message, remove_last_transaction_confirm)
+    message = BO.send_message(text='\n'.join(message_text), chat_id=message.chat.id, params=local_params)
     
-    bot.register_next_step_handler(message, remove_last_transaction_confirm)
     PO.save_params(message.chat.id, local_params)
 
 def remove_last_transaction_confirm(message):
