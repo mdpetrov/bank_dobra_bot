@@ -4,6 +4,13 @@ import datetime
 from bank_dobra_bot.log_operation import LogOperations
 import os
 
+def get_dit_values(d, keys):
+''' Return several elements from a dict as a list'''
+    res = []
+    for k in keys:
+        res.append(d[k])
+    return res
+
 class TransactionOperations(object):
     def __init__(self, config):
         self.config = config
@@ -23,10 +30,10 @@ class TransactionOperations(object):
         file_path = os.path.join(file_dir, file_name)
         
         id = 0 
-        transaction_to_add = {'timestamp':datetime.datetime.now().strftime('%Y-%h-%d %H-%M-%S'),
-                                     'id':id,
-                                     'fund':fund,
-                                     'sum':amount}
+        transaction_to_add = {'id':id,
+                              'timestamp':datetime.datetime.now().strftime('%Y-%h-%d %H-%M-%S'), #change to moscow tz
+                              'fund':fund,
+                              'sum':amount}
         if os.path.isfile(file_path):
             with open(file_path, mode='rt', encoding='utf-8') as con:
                 transaction_list = json.load(con)
@@ -69,7 +76,35 @@ class TransactionOperations(object):
                 return "Нечего удалять"
         else:
             return "Нечего удалять"
-            
+    
+    def get_transaction_list(self, chat, limit=10):
+        path = self.config.path
+        LO = self.LO
+        LO.write_log(chat, f'Last {limit} transactions have been requested')
+        file_dir = path['transaction_dir']
+        file_name = f"{chat.username}.json"
+        file_path = os.path.join(file_dir, file_name)
+        if os.path.isfile(file_path):
+            with open(file_path, mode='rt', encoding='utf-8') as con:
+                transaction_list = json.load(con)
+            if len(transaction_list) > 0:
+                if len(transaction_list) <= limit:
+                    transaction_list_return = transaction_list
+                else:
+                    transaction_list_return = transaction_list[:limit]
+                transaction_str_return = [
+                    f"{_id} - {_time} - {_fund} - {_amount}" 
+                        for _id, _time, _fund, _amount in get_dit_values(transaction_list_return, 
+                                                                         keys=['id', 'timestamp', 'fund', 'amount'
+                ])]
+                transaction_str_return.insert(0, 'id\tВремя\tФонд\tСумма\n')
+                LO.write_log(chat, f'Returning {len(transaction_str_return)} transactions')
+                return f'Последние {len(transaction_str_return)} транзакций:\n\n{"\n".join(transaction_str_return)}'
+            else:
+                return "Ничего нет"
+        else:
+            return "Ничего нет"
+    
     def transaction_sum(self, transaction_list):
         total_sum = 0
         for transaction in transaction_list:
