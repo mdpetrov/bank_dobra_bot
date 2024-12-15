@@ -49,10 +49,10 @@ def get_message_start(message):
         # 'Удалить последнюю транзакцию': {'callback_data': 'remove_last_transaction'}
     # })
     start_text += '''
-/start \t - Приветственное сообщение
-/add_transaction \t - Добавить транзакцию
-/remove_last_transaction \t - Удалить последнюю транзакцию
-/show_transaction_list \t - Вывести список последних транзакций
+/start - Приветственное сообщение
+/add_transaction - Добавить транзакцию
+/remove_last_transaction - Удалить последнюю транзакцию
+/show_transaction_list - Вывести список последних транзакций
 '''
     BO.send_message(message.chat.id, text=start_text, params=local_params)
     PO.save_params(message.chat.id, local_params)

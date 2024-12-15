@@ -93,7 +93,7 @@ class TransactionOperations(object):
                 else:
                     transaction_list_return = transaction_list[:limit]
                 transaction_str_return = [
-                    f"{x['id']} - {x['time']} - {x['fund']} - {x['amount']}" 
+                    f"{x['id']} - {x['timestamp']} - {x['fund']} - {x['amount']}" 
                         for x in transaction_list_return
                  ]
                 transaction_str_return.insert(0, 'id\tВремя\tФонд\tСумма\n')
