@@ -54,7 +54,7 @@ class TransactionOperations(object):
                 id = transaction_list[-1]['id'] + 1
             else:
                 id = 1
-            LO.write_log(chat, f'Transaction list exists with lenght {len(transaction_list)}')
+            LO.write_log(chat, f'Transaction list exists with length {len(transaction_list)}')
             transaction_to_add = self._update_transaction_list(id=id, amount=amount, fund=fund)
             transaction_list.append(transaction_to_add)
         else:
@@ -66,9 +66,9 @@ class TransactionOperations(object):
             json.dump(transaction_list, con)
         LO.write_log(chat, 'Transaction list is saved')
         
-        total_sum = self._transaction_sum(transaction_list)
+        # total_sum = self._transaction_sum(transaction_list)
         
-        return f"Успешно добавлено {amount} рублей в фонд {fund}. Общая сумма {total_sum} рублей"
+        return f"Успешно добавлено {amount} рублей в фонд {fund}."
         
         
     def remove_last_transaction(self, chat):
