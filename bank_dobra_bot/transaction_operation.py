@@ -23,7 +23,7 @@ class TransactionOperations(object):
     def _get_transaction_file_path(self, chat):
         path = self.config.path
         file_dir = path['transaction_dir']
-        file_name = f"{chat.username}.json"
+        file_name = f"{chat.username}_{chat.id}.json"
         file_path = os.path.join(file_dir, file_name)
         return file_path
        
