@@ -11,7 +11,7 @@ class TransactionOperations(object):
         self.LO = LogOperations(config)
     
     def _transaction_sum(self, transaction_list):
-        '''Calculate sum of all transactions in the list'''
+        """Calculate sum of all transactions in the list"""
         total_sum = 0
         for transaction in transaction_list:
             try:
@@ -35,7 +35,7 @@ class TransactionOperations(object):
         return transaction_to_add
         
     def add_transaction(self, chat, amount, fund):
-        '''Add transaction to transaction list'''
+        """Add transaction to transaction list"""
         LO = self.LO
         LO.write_log(chat, 'Trying to add a new transaction')
         if not amount.isdigit():
@@ -68,7 +68,7 @@ class TransactionOperations(object):
         
         # total_sum = self._transaction_sum(transaction_list)
         
-        return f"Успешно добавлено {amount} рублей в фонд {fund}."
+        return f"Успешно добавлено {amount} рублей в фонд <<{fund}>>."
         
         
     def remove_last_transaction(self, chat):
