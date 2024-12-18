@@ -3,4 +3,4 @@ path = {"token": "./.secret/token/.token",
         "data_dir": "./.secret/param",
         "transaction_dir": "./.secret/transaction"}
 param_value = {}
-fund_list = ['Старость в радость', 'Супер-собака', 'Подари жизнь']
+fund_list = ['Старость в радость', 'Супер собака', 'Подари жизнь']
