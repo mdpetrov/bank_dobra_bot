@@ -68,7 +68,7 @@ class TransactionOperations(object):
         
         # total_sum = self._transaction_sum(transaction_list)
         
-        return f"Успешно добавлено {amount} рублей в фонд *{fund}*."
+        return f"Успешно добавлено {amount} рублей в фонд *{fund}*\."
         
         
     def remove_last_transaction(self, chat):
