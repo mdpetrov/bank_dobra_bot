@@ -40,12 +40,12 @@ class TransactionOperations(object):
         LO.write_log(chat, 'Trying to add a new transaction')
         if not amount.isdigit():
             LO.write_log(chat, 'Wrong transaction amount: not a number')
-            return "Неверная сумма транзакции\. Ничего не добавлено\."
+            return "Неверная сумма транзакции. Ничего не добавлено."
         else:
             amount = int(amount)
             if amount <= 0:
                 LO.write_log(chat, 'Wrong transaction amount: less or equal zero')
-                return "Неверная сумма транзакции\. Ничего не добавлено\."
+                return "Неверная сумма транзакции. Ничего не добавлено."
         file_path = self._get_transaction_file_path(chat=chat)
         if os.path.isfile(file_path):
             with open(file_path, mode='rt', encoding='utf-8') as con:
@@ -68,7 +68,7 @@ class TransactionOperations(object):
         
         # total_sum = self._transaction_sum(transaction_list)
         
-        return f"Успешно добавлено {amount} рублей в фонд *{fund}*\."
+        return f"Успешно добавлено {amount} рублей в фонд {fund}."
         
         
     def remove_last_transaction(self, chat):
