@@ -41,9 +41,10 @@ for f in listdir(path['transaction_dir']):
     if not isfile(join(path['transaction_dir'], f)):
         continue
     file_name = f[f.rfind('/') + 1:]
-    delimeter = file_name.rfind('_')
-    user_id = int(file_name[delimeter + 1:])
-    user_name = file_name[:delimeter]
+    left = file_name.rfind('_')
+    right = file_name.rfind('.')
+    user_id = int(file_name[left + 1:])
+    user_name = file_name[:right]
     with open(join(path['transaction_dir'], f), 'r', encoding='utf8') as fp:
         user_stat = json.load(fp)
     user_stat_df = pd.DataFrame(user_stat)
