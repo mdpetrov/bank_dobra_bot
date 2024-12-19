@@ -49,11 +49,11 @@ for f in listdir(path['transaction_dir']):
         user_stat = json.load(fp)
     user_stat_df = pd.DataFrame(user_stat)
     if len(user_stat_df) > 0:
-        res[user_name] = user_stat_df
+        res[file_name] = user_stat_df
 
 
-print(res)
 res_df = pd.concat(res)
+print(res_df)
 dg = res_df.groupby('fund')['sum'].sum()
 
 stat_print =  [f"{fund} - {sum}" for fund,sum in dg.to_dict().items()]
