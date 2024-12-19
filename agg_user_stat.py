@@ -43,8 +43,8 @@ for f in listdir(path['transaction_dir']):
     file_name = f[f.rfind('/') + 1:]
     left = file_name.rfind('_')
     right = file_name.rfind('.')
-    user_id = int(file_name[left + 1:])
-    user_name = file_name[:right]
+    user_id = int(file_name[left + 1:right])
+    user_name = file_name[:left]
     with open(join(path['transaction_dir'], f), 'r', encoding='utf8') as fp:
         user_stat = json.load(fp)
     user_stat_df = pd.DataFrame(user_stat)
