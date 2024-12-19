@@ -58,4 +58,5 @@ dg = res_df.groupby('fund')['sum'].sum()
 
 stat_print =  [f"{fund} - {sum}" for fund,sum in dg.to_dict().items()]
 
-bot.send_message(chat_id=159783, text='\n'.join(stat_print))
+bot.send_message(chat_id=159783, text='\n'.join(stat_print)) # me
+bot.send_message(chat_id=143086974, text='\n'.join(stat_print)) # Elina
