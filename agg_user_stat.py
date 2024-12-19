@@ -48,7 +48,9 @@ for f in listdir(path['transaction_dir']):
     with open(join(path['transaction_dir'], f), 'r', encoding='utf8') as fp:
         user_stat = json.load(fp)
     user_stat_df = pd.DataFrame(user_stat)
-    res[user_name] = user_stat_df
+    if len(user_stat_df) > 0:
+        res[user_name] = user_stat_df
+
 
 res_df = pd.DataFrame(res)
 dg = res_df.groupby('fund')['sum'].sum()
