@@ -52,9 +52,10 @@ for f in listdir(path['transaction_dir']):
         res[user_name] = user_stat_df
 
 
-res_df = pd.DataFrame(res)
+print(res)
+res_df = pd.concat(res)
 dg = res_df.groupby('fund')['sum'].sum()
 
 stat_print =  [f"{fund} - {sum}" for fund,sum in dg.to_dict().items()]
 
-bot.send_message(chat_id=159783, text=stat_print)
+bot.send_message(chat_id=159783, text='\n'.join(stat_print))
